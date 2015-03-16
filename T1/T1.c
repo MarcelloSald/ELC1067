@@ -67,9 +67,12 @@ void busca_alunos(int* n, char* busca, char nomes[][50], int* matriculasAlunos, 
 
 int main(int argc, char**argv){
 	char nome[50];
-	char* busca = nome;
+	char* busca;
+    busca = malloc(50*sizeof(char));
+    busca = nome;
 	if(argc > 1){
 		strcpy(nome, argv[1]);
+		printf("Nome solicitado eh: %s ", busca);
 }
 	int matriculasAluno[50];
 	int matriculasNota[50];
