@@ -1,87 +1,62 @@
 #include <stdio.h>
 #include <string.h>
 
-void ler_alunos(int * matriculas, char nome[][50], int * n) {
-    int matricula, i = 0, linha = 0;
-    char caracter;
-    char name[50];
-    FILE * f= fopen("alunos.txt", "r");
-    if (f == NULL) {
+void main(int argc, char ** argv){
+    int matriculasAluno[50];
+	int matriculasNota[50];
+	char nomes[50][50], nome[50], c;
+	float media, n1[50], n2[50];
+	int n = 0, j = 0;
+
+    if(argc < 2){
+		return;
+    }
+
+    FILE * f1 = fopen("alunos.txt", "r");
+    if (f1 == NULL) {
         printf("F4T4L 3RR0R");
         return;
-        }
-    while (feof(f) == 0) {
-        if (fscanf(f, "%d", &matricula)<=0) {
+    }
+
+    while (!feof(f1)) {
+        if (fscanf(f1, "%d", &matriculasAluno[n]) <= 0) {
             break;
-        caracter = fgetc(f);
-        while (caracter != '\n') {
-            name[i] = caracter;
-            i++;
-            caracter = fgetc(f);
-            }
-            name[i]='\0';
-            matriculas[linha]= matricula;
-			strcpy(nome[linha],name);
-			linha++;
         }
-        *n = linha;
-        fclose(f);
-        }
-}
 
-float medias(int * matricula) {
-    int m, linha=0;
-    float n1, n2;
-    FILE * f = fopen("notas.txt", "r");
-    if (f == NULL) {
-        printf("F4T4L 3RR0R \n");
+        c = fgetc(f1);
+
+        while (c != '\n') {
+            nomes[n][j] = c;
+            j++;
+            c = fgetc(f1);
+        }
+        nomes[n][j] = '\0';
+        j = 0;
+        n++;
+    }
+
+    fclose(f1);
+
+    FILE * f2 = fopen("notas.txt", "r");
+    if (f2==NULL){
+        printf("F4TAL 3RR0R \n");
         return;
-        }
-        else{
-            if (fscanf(f, "%d", &m)<=0) {
-                }
-            while (fscanf(f,"%f", &n1) && fscanf(f, "%f", &n2) != EOF){
-                matricula[linha]= m;
-		        matricula[linha] = (n1 + n2)/2;
-		        linha++;
-
+    } else{
+        n = 0;
+        while (!feof(f2)) {
+            if (fscanf(f2, "%d %f %f", &matriculasAluno[n], &n1[n], &n2[n]) <= 0) {
+                break;
             }
+
+            n++;
         }
-    return 0.0;
+
+        fclose(f2);
     }
 
-void busca_alunos(int* n, char* busca, char nomes[][50], int* matriculasAlunos, int* matriculasNota, float* media){
-  int i,j;
-        for(i=0;i<*n;i++){
-                j=0;
-             if(strstr(nomes[i],busca) != NULL){
-                while(matriculasAlunos[i] != matriculasNota[j]){
-                        j++;
-             }
-                printf("Aluno:%s Media: %.f\n",nomes[i],media[j]);
+    for (j = 0; j < n; j++) {
+        if (strstr(nomes[j], argv[1]) != NULL) {
+            printf("%.2f %s\n", (n1[j] + n2[j]) / 2, nomes[j]);
         }
     }
-}
-
-
-
-int main(int argc, char**argv){
-	char nome[50];
-	char* busca;
-    busca = malloc(50*sizeof(char));
-    busca = nome;
-	if(argc > 1){
-		strcpy(nome, argv[1]);
-		printf("Nome solicitado eh: %s ", busca);
-}
-	int matriculasAluno[50];
-	int matriculasNota[50];
-	char nomes[50][50];
-	float media[50];
-	int n;
-
-	ler_alunos(matriculasAluno,nomes,&n);
-	medias(matriculasAluno);
-	busca_alunos(&n,busca,nomes,matriculasAluno,matriculasNota,media);
-	return 0;
 }
