@@ -69,7 +69,7 @@ int main(int argc, char**argv){
 	char nome[50];
 	char* busca = nome;
 	if(argc > 1){
-		busca = argv[1];
+		strcpy(nome, argv[1]);
 }
 	int matriculasAluno[50];
 	int matriculasNota[50];
