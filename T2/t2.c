@@ -1,17 +1,23 @@
 #include <stdio.h>
 #include <string.h>
 
+int matriculasAluno[50];
+int matriculasNota[50];
+char nomes[50][50], nome[50], c;
+float media, n1[50], n2[50];
+int n = 0, j = 0;
 void main(int argc, char ** argv){
-    int matriculasAluno[50];
-	int matriculasNota[50];
-	char nomes[50][50], nome[50], c;
-	float media, n1[50], n2[50];
-	int n = 0, j = 0;
-
     if(argc < 2){
 		return;
     }
+    for (j = 0; j < n; j++) {
+        if (strstr(nomes[j], argv[1]) != NULL) {
+            printf("%.2f %s\n", (n1[j] + n2[j]) / 2, nomes[j]);
+        }
+    }
+}
 
+int le_alunos(){
     FILE * f1 = fopen("alunos.txt", "r");
     if (f1 == NULL) {
         printf("F4T4L 3RR0R");
@@ -36,7 +42,9 @@ void main(int argc, char ** argv){
     }
 
     fclose(f1);
+}
 
+void le_notas(){
     FILE * f2 = fopen("notas.txt", "r");
     if (f2==NULL){
         printf("F4TAL 3RR0R \n");
@@ -52,11 +60,5 @@ void main(int argc, char ** argv){
         }
 
         fclose(f2);
-    }
-
-    for (j = 0; j < n; j++) {
-        if (strstr(nomes[j], argv[1]) != NULL) {
-            printf("%.2f %s\n", (n1[j] + n2[j]) / 2, nomes[j]);
-        }
     }
 }
