@@ -1,106 +1,87 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-int le_alunos(int *matriculasAluno, char **nomes, int *n){
-    char c, nome[50];
-    int i=0, j=0;
-    FILE * f1 = fopen("alunos.txt", "r");
-    if (f1 == NULL) {
-        printf("F4T4L 3RR0R");
-        return;
-    }else{
-        i=0;
-        while (!feof(f1)) {
-            //nomes[i] = (char*) malloc(50*sizeof(char));
-            nomes[i]= (char*) malloc((strlen(nome)+1)*sizeof(char));
-            strcpy(nomes[i], nome);
-            if (fscanf(f1, "%d", &matriculasAluno[i]) <= 0) {
-                break;
-            }
+#include <string.h>
 
-            c = fgetc(f1);
+void le_alunos(int* matriculasAluno, char** nomes, int* n){
 
-            while (c != '\n') {
-                nomes[i][j] = c;
-                j++;
-                c = fgetc(f1);
-            }
-            nomes[i][j] = '\0';
-            j = 0;
-            i++;
-        }
-    }
+    int matricula, contador, linha = 0;
+	char c, nome[50];
+    FILE *f1 = fopen("alunos.txt","r");
+
+	if (f1 == NULL){
+		printf("F4T4L 3RR0R");
+            return;
+	}
+    while(!feof(f1) != 0 ){
+		if(fscanf(f1, "%d", &matricula) <= 0)
+            break;
+		contador = 0;
+		c = fgetc(f1);
+		while(c != '\n' && feof(f1) == 0){
+			nome[contador] = c;
+			contador++;
+			c = fgetc(f1);
+		}
+        nome[contador] = '\0';
+        matriculasAluno[linha] = matricula;
+        nomes[linha] = (char*) malloc((strlen(nome)+1) * sizeof(char));
+        strcpy(nomes[linha], nome);
+        linha++;
+	}
+    *n = linha;
     fclose(f1);
 }
 
-void le_notas(int *matriculasNota, float *notas){
-    int contador;
+void le_notas(float* medias){
+    int contador = 0, matricula;
     float n1, n2;
 
-    FILE * f2 = fopen("notas.txt", "r");
-    if (f2==NULL){
-        printf("F4TAL 3RR0R \n");
-        return;
-    } else{
-        contador = 0;
-        while(!feof(f2)){
-            if(fscanf(f2,"%d %f %f ",&matriculasNota[contador],&n1,&n2) != 3){
-                printf("F4T4L 3RR0R");
-                return;
-            }
-            notas[contador++]=(n1+n2)/2;
-        }
+    FILE *f2 = fopen("notas.txt", "r");
+
+    if (f2 == NULL){
+		printf("F4T4L 3RR0R");
+            return;
+	}
+
+
+    while(!feof(f2) != 0){
+        if(fscanf(f2, "%d" "%f" "%f\n", &matricula, &n1, &n2) == 0)
+            break;
+        medias[contador] = (n1+n2)/2;
+        contador++;
     }
-        fclose(f2);
+    fclose(f2);
 }
-void imprime(int *matriculasAluno, int *matriculasNota, float *notas, char **nomes, char *pesquisa_nome){
-    int i, j, k;
-    char m[50];
-    strtoupper(pesquisa_nome);
-    while(!matriculasAluno[i]<0){
-        j=0;
-        strcpy(m, nomes[i]);
-        strtoupper(m);
-    }
-    if(strstr(m, pesquisa_nome)!=NULL){
-            k++;
-            while(matriculasAluno[i] != matriculasNota[j]){
-                j++;
-            if(k==1){
-                printf(" MEDIA: %.3f    |   NOME: %s\n", notas[j], nomes[i]);
+
+void imprime(char* pesquisa_nome, char** nomes, int n, float* medias){
+
+    int contador;
+    for(contador = 0; contador < n; contador++){
+        if(strstr(nomes[contador], pesquisa_nome)!= NULL){
+            printf("%.2f %s\n", medias[contador], nomes[contador]);
         }
-        i++;
-    }
-    if(k==0)
-        printf("Nome nao consta no arquivo/ ");
     }
 }
 
-void main(int argc, char ** argv){
+int main(int argc, char** argv){
 
-    int i, n;
-    int *matriculasAluno = (int*) malloc(50*sizeof(int));
-    int *matriculasNota = (int*) malloc(50*sizeof(int));
-    float *notas = (float*) malloc(50*sizeof(float));
-    char **nomes = (char**) malloc(50*sizeof(char*));
-    char *pesquisa_nome = (char*)(50*sizeof(char));
-    int tamanho=0;
+    int *n;
+    char* pesquisa_nome = (char*) malloc(50* sizeof(char));
+    float* medias = (float*) malloc(50* sizeof(float));
+    int* matriculas = (int*)malloc(50* sizeof(int));
+    char** nomes = (char**) malloc(50* sizeof(char*));
 
-    if(argc < 2){
-        strcpy(pesquisa_nome, argv[1]);
-        printf(" Nome pesquisado: %s \n", pesquisa_nome);
+    if(argc >1){
+        pesquisa_nome = argv[1];
     }
-    le_alunos(matriculasAluno, nomes, &n);
-    le_notas(matriculasNota, notas);
-    imprime(matriculasAluno, matriculasNota, notas, nomes, pesquisa_nome);
+
+    le_alunos(matriculas, nomes, &n);
+    le_notas(medias);
+    imprime(pesquisa_nome, nomes, n, medias);
 
     free(pesquisa_nome);
-    free(matriculasAluno);
-    free(matriculasNota);
-    free(notas);
-
-    for(i=0; i<n; i++)
-        free(nomes[i]);
     free(nomes);
+    free(medias);
+    free(matriculas);
     return;
 }
