@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 int le_alunos(int *matriculasAluno, char **nomes, int *n){
     char c, nome[50];
     int i=0, j=0;
@@ -54,7 +55,28 @@ void le_notas(int *matriculasNota, float *notas){
     }
         fclose(f2);
 }
-
+void imprime(int *matriculasAluno, int *matriculasNota, float *notas, char **nomes, char *pesquisa_nome){
+    int i, j, k;
+    char m[50];
+    strtoupper(pesquisa_nome);
+    while(!matriculasAluno[i]<0){
+        j=0;
+        strcpy(m, nomes[i]);
+        strtoupper(m);
+    }
+    if(strstr(m, pesquisa_nome)!=NULL){
+            k++;
+            while(matriculasAluno[i] != matriculasNota[j]){
+                j++;
+            if(k==1){
+                printf(" MEDIA: %.3f ..... NOME: %s\n", notas[j], nomes[i]);
+        }
+        i++;
+    }
+    if(k==0)
+        printf("Nome nao consta no arquivo/ ");
+    }
+}
 
 void main(int argc, char ** argv){
 
@@ -70,7 +92,17 @@ void main(int argc, char ** argv){
         strcpy(pesquisa_nome, argv[1]);
         printf(" Nome pesquisado: %s \n", pesquisa_nome);
     }
-    le_Alunos(matriculasAluno, nomes, &n);
-    le_Notas(matriculasNota, notas);
+    le_alunos(matriculasAluno, nomes, &n);
+    le_notas(matriculasNota, notas);
+    imprime(matriculasAluno, matriculasNota, notas, nomes, pesquisa_nome);
+
+    free(pesquisa_nome);
+    free(matriculasAluno);
+    free(matriculasNota);
+    free(notas);
+
+    for(i=0; i<n; i++)
+        free(nomes[i]);
+    free(nomes);
     return;
 }
