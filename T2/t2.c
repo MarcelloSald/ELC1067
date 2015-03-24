@@ -11,7 +11,9 @@ int le_alunos(int *matriculasAluno, char **nomes, int *n){
     }else{
         i=0;
         while (!feof(f1)) {
-            nomes[i] = (char*) malloc(50*sizeof(char));
+            //nomes[i] = (char*) malloc(50*sizeof(char));
+            nomes[i]= (char*) malloc((strlen(nome)+1)*sizeof(char));
+            strcpy(nomes[i], nome);
             if (fscanf(f1, "%d", &matriculasAluno[i]) <= 0) {
                 break;
             }
@@ -47,10 +49,6 @@ void le_notas(int *matriculasNota, float *notas){
                 return;
             }
             notas[contador++]=(n1+n2)/2;
-            if (contador>=50){
-                matriculasNota = (int*) realloc(matriculasNota, 50*sizeof(int));
-                notas = (float*) realloc(notas, 50*sizeof(float));
-            }
         }
     }
         fclose(f2);
@@ -69,7 +67,7 @@ void imprime(int *matriculasAluno, int *matriculasNota, float *notas, char **nom
             while(matriculasAluno[i] != matriculasNota[j]){
                 j++;
             if(k==1){
-                printf(" MEDIA: %.3f ..... NOME: %s\n", notas[j], nomes[i]);
+                printf(" MEDIA: %.3f    |   NOME: %s\n", notas[j], nomes[i]);
         }
         i++;
     }
