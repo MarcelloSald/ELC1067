@@ -17,11 +17,12 @@ struct vetor {
 };
 
 vetor_t* vetor_cria(void)
-{
+{   int i;
 	struct vetor *vet = (struct vetor*)memo_aloca(sizeof(struct vetor));
 	vet->n = 0;
+	vet->baralho=(struct carta*) memo_aloca(TAM*sizeof(carta));
 	for(i=0; i<=TAM; i++){
-        vet->baralho[i]=memo_aloca(sizeof(struct carta*));
+        vet->baralho[i]==NULL;
 	}
 	return vet;
 }
@@ -40,16 +41,12 @@ int vetor_numelem(vetor_t *vet)
     }
 	return vet->n;
 }
-/* insere uma carta no vetor vet, na posição indice.
- * se a carta já existe nessa posição, as cartas subsequentes avançam uma
- * posição.
- * se o vetor não tem mais espaço (cheio), utiliza realloc.
- */
+
 void vetor_insere_carta(vetor_t *vet, int indice, carta c)
-{
-    if(vet->baralho[indice] != NULL){
+{   if(vet->baralho[indice] != NULL){
         vet->baralho[indice]= c;
     }
+    vet->n++;
 }
 
 carta vetor_remove_carta(vetor_t *vet, int indice)
@@ -57,7 +54,7 @@ carta vetor_remove_carta(vetor_t *vet, int indice)
     int i;
     carta* c = (struct carta*) memo_aloca(sizeof(carta));
     c = vet->baralho[indice];
-    for(i=; i>indice; i--){
+    for(i=0; i>indice; i--){
         vet->baralho[i--];
     }
 	return c;
