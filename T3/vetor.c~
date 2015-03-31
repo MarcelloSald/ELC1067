@@ -56,11 +56,9 @@ carta vetor_remove_carta(vetor_t *vet, int indice)
 	int i;
 	carta c;
 	c = vet->baralho[indice];
-	for(i=indice; i<vet->n-1; i++){
+	for(i=indice; i<c; i++){
 		vet->baralho[i]=vet->baralho[i+1];
 	}
-	vet->n--;
-	vet->baralho[vet->n]=NULL;
 	return c;
 }
 
