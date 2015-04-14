@@ -1,29 +1,3 @@
-/*
- * jogo.c TAD que implementa o jogo de cartas "solitaire".
- * 
- * The MIT License (MIT)
- * 
- * Copyright (c) 2014, 2015 João V. Lima, UFSM 2005       Benhur Stein, UFSM
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
- */
-
 #include <assert.h>
 
 #include "jogo.h"
@@ -127,4 +101,105 @@ jogo_pilha(jogo sol, int i)
 	assert(jogo_valido(sol));
 	assert(i >= 0 && i < 7);
 	return sol->pilhas[i];
+}
+
+void abre_carta(jogo sol, pilha p){ // ainda nao utilizada, vai economizar codigo nas funçoes abaixo
+	if(!pilha_vazia(p)){
+		carta c = pilha_remove_carta(p);
+		carta_abre(c);
+		pilha_insere_carta(p,c);
+	}
+	jogo_desenha(sol);
+}
+
+void monte_para_descarte(jogo sol){ // pronta
+	carta c = pilha_remove_carta(jogo_monte(sol));
+	carta_abre(c);
+	pilha_insere_carta(jogo_descartes(sol),c);
+	jogo_desenha(sol);
+}
+
+void descarte_para_monte(jogo sol){ //pronta
+	while(!pilha_vazia(jogo_descartes(sol))){
+		carta c = pilha_remove_carta(jogo_descartes(sol));
+		carta_fecha(c);
+		pilha_insere_carta(jogo_monte(sol), c);
+		jogo_desenha(sol);
+	}
+}
+
+void descarte_para_ases(jogo sol){
+	int npdestino;
+	printw("\nDigite a pilha de destino de AS");
+	npdestino = tela_le(sol->tela);
+	npdestino= npdestino-49;
+	tela_atualiza(sol->tela);
+	if(npdestino != 0 && npdestino != 1 && npdestino != 2 && npdestino != 3){
+		printw("\nJogada Invalida");
+		tela_atualiza(sol->tela);
+		printw("\nDigite uma pilha de 1 a 4");
+		npdestino = tela_le(sol->tela);
+		npdestino= npdestino-49;
+	}
+	pilha p = jogo_ases(sol,npdestino);
+	carta c = pilha_remove_carta(jogo_descartes(sol));
+	if(pilha_vazia(p)){
+		if(carta_valor(c) == 1){
+			pilha_insere_carta(jogo_ases(sol,npdestino),c);
+			jogo_desenha(sol);
+			return;
+	}else{
+		printw ("\nJogada Invalida");
+		}
+	}
+	if(!pilha_vazia(p)){
+		carta as = pilha_remove_carta(jogo_ases(sol,npdestino)); // carta que esta no monte de as
+		if (carta_valor(c) == carta_valor(as)+1 && carta_naipe(c) == carta_naipe(as)){
+		pilha_insere_carta(jogo_ases(sol,npdestino),as);
+		pilha_insere_carta(jogo_ases(sol,npdestino),c);
+		jogo_desenha(sol);
+	}else{
+		printw("\nJogada invalida");
+		pilha_insere_carta(jogo_ases(sol,npdestino),as);
+		pilha_insere_carta(jogo_descartes(sol),c);
+		}
+	}
+}
+
+
+void descarte_para_jogo(jogo sol){ // move as cartas do descarte para as 7 pilhas
+	int npdestino;
+	printw ("\n Digite o numero da pilha pra a qual deseja mover");
+	npdestino = tela_le(sol-> tela);
+	npdestino = npdestino - 49;
+	if(npdestino != 0 && npdestino != 1 && npdestino != 2 && npdestino != 3 && npdestino != 4 && npdestino != 5 && npdestino !=6 && npdestino != 7 ){
+		printw("\nJogada Invalida");
+		tela_atualiza(sol->tela);
+		printw("\nDigite uma pilha de 1 a 7");
+		npdestino = tela_le(sol->tela);
+		npdestino= npdestino-49;
+	}
+	pilha p = jogo_pilha(sol,npdestino);
+	carta c = pilha_remove_carta(jogo_descartes(sol));
+	if(pilha_vazia(p)){
+		if(carta_valor(c) == 13){ //se for rei insere na pilha vazia
+		pilha_insere_carta(jogo_pilha(sol,npdestino),c);
+		jogo_desenha(sol);
+		return;
+	}else{
+		printw("\nJogada Invalida");
+		}
+	}
+	if(!pilha_vazia(p)){
+		carta jogo = pilha_remove_carta(jogo_pilha(sol,npdestino)); // carta que esta em uma das 7 pilhas
+		if(carta_valor(c) == carta_valor(jogo)-1 && carta_naipe(c) != carta_naipe(jogo)){
+		pilha_insere_carta(jogo_pilha(sol,npdestino),jogo);
+		pilha_insere_carta(jogo_pilha(sol,npdestino),c);
+		jogo_desenha(sol);
+	}else{
+		printw("\nJogada Invalida");
+		pilha_insere_carta(jogo_pilha(sol,npdestino),jogo);
+		pilha_insere_carta(jogo_descartes(sol),c);
+		}
+	}
 }
