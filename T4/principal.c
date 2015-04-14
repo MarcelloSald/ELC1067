@@ -3,6 +3,7 @@
 
 #include "memo.h"
 #include "jogo.h"
+#include "vetor.h"
 
 
 void inicia_jogo(jogo solit){
